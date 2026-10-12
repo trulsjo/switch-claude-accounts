@@ -68,8 +68,10 @@ New-Alias -Name Set-PoshContext -Value Set-ClaudePoshContext -Scope Global -Forc
 
 # 5. GH_TOKEN: set or clear it from the nearest .gh-token before each prompt, by
 # wrapping the existing prompt (oh-my-posh's, or the default) instead of replacing it.
-# Guarded so re-sourcing doesn't make the wrapper call itself.
-if (-not (Test-Path Function:\GhTokenInnerPrompt)) {
+# Capture the current prompt unless it is already a wrapper (this one, or the old
+# copy that lived in the profile), so re-sourcing the script alone doesn't make it
+# call itself, while re-running oh-my-posh init picks up the new prompt it defines.
+if ("${function:prompt}" -notmatch 'GhTokenInnerPrompt') {
     ${function:GhTokenInnerPrompt} = ${function:prompt}
 }
 
