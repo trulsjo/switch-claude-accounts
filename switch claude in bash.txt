@@ -101,8 +101,20 @@ _get_gh_token() {
     fi
 }
 
-# 4. Prompt: refresh context before every prompt; the escapes live in PS1
-# itself, because \[ \] are only interpreted there, not inside expanded variables
+# 4. Prompt: refresh context before every prompt.
+# With oh-my-posh (source this AFTER `eval "$(oh-my-posh init bash ...)"`): its
+# hook calls set_poshcontext after capturing $? and before rendering, so the
+# theme's "text" segment can show {{ .Env.CLAUDE_ACCOUNT }}.
+if declare -F _omp_hook > /dev/null; then
+    set_poshcontext() {
+        _get_gh_token
+        _get_claude_context
+        export CLAUDE_ACCOUNT="$CLAUDE_ACTIVE_TYPE"
+    }
+    return 0 2> /dev/null
+fi
+# Without it: the escapes live in PS1 itself, because \[ \] are only
+# interpreted there, not inside expanded variables
 if [[ ! "$PROMPT_COMMAND" =~ _get_claude_context ]]; then
     PROMPT_COMMAND="_get_claude_context${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
 fi
