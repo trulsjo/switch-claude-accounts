@@ -1,0 +1,3 @@
+# Keep the bash script LF even where core.autocrlf=true (Git for Windows' default):
+# Git Bash copes with CRLF, but bash elsewhere (WSL, Linux, macOS) does not
+switch-claude.sh text eol=lf
