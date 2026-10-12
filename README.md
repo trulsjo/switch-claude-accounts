@@ -67,3 +67,7 @@ If Git Bash warns on start that it found `~/.bashrc` but no `~/.bash_profile`, i
 
 Open shells pick up a change to either script after `. $PROFILE` or `source ~/.bashrc`. A
 running Claude session keeps the account it started with.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
