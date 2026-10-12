@@ -29,7 +29,13 @@ or without oh-my-posh.
 ### Prompt segment (optional)
 
 `omp-theme.json` is an oh-my-posh theme with a segment showing `CLAUDE_ACCOUNT`, cyan for
-Personal and green for Work. Use it by pointing the init line at it:
+Personal and green for Work:
+
+![oh-my-posh prompt with the Claude segment showing Personal in cyan](docs/prompt-personal.png)
+
+![oh-my-posh prompt with the Claude segment showing Work in green](docs/prompt-work.png)
+
+Use it by pointing the init line at it:
 
 ```powershell
 oh-my-posh init pwsh --config "C:\src\switch-claude-accounts\omp-theme.json" | Invoke-Expression
