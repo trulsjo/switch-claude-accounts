@@ -60,7 +60,7 @@ Source the script from `~/.bashrc`, **after** the oh-my-posh init line if you us
 
 ```bash
 eval "$(oh-my-posh init bash --config 'C:\src\switch-claude-accounts\omp-theme.json')"
-source "/c/src/switch-claude-accounts/switch claude in bash.txt"
+source /c/src/switch-claude-accounts/switch-claude.sh
 ```
 
 This defines a `claude` wrapper and `switch_claude_account [personal|work]` (alias
