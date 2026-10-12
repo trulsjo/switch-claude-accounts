@@ -65,3 +65,22 @@ function Set-ClaudePoshContext {
     $env:CLAUDE_ACCOUNT = (Get-ClaudeConfigContext).Type
 }
 New-Alias -Name Set-PoshContext -Value Set-ClaudePoshContext -Scope Global -Force
+
+# 5. GH_TOKEN: set or clear it from the nearest .gh-token before each prompt, by
+# wrapping the existing prompt (oh-my-posh's, or the default) instead of replacing it.
+# Guarded so re-sourcing doesn't make the wrapper call itself.
+if (-not (Test-Path Function:\GhTokenInnerPrompt)) {
+    ${function:GhTokenInnerPrompt} = ${function:prompt}
+}
+
+function Prompt {
+    # Run the inner prompt first so it still sees the real $? / $LASTEXITCODE
+    $inner = GhTokenInnerPrompt
+    $tokenFile = Find-UpwardFile '.gh-token'
+    if ($tokenFile) {
+        $env:GH_TOKEN = "$(Get-Content -LiteralPath $tokenFile -Raw)".Trim()
+    } else {
+        Remove-Item env:GH_TOKEN -ErrorAction SilentlyContinue
+    }
+    $inner
+}

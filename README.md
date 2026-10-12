@@ -21,29 +21,10 @@ oh-my-posh init pwsh | Invoke-Expression
 . "C:\src\switch-claude-accounts\switch-claude.ps1"
 ```
 
-This defines a `claude` wrapper, `Switch-ClaudeAccount` (alias `use-personal`), and sets
-`$env:CLAUDE_ACCOUNT` to `Personal` or `Work` before each oh-my-posh render.
-
-`GH_TOKEN` is not set by the script itself. Add this to the profile, below the line above, to
-get it; it uses the script's `Find-UpwardFile`:
-
-```powershell
-if (-not (Test-Path Function:\GhTokenInnerPrompt)) {
-    ${function:GhTokenInnerPrompt} = ${function:prompt}
-}
-
-function Prompt {
-    # Run the inner prompt first so it still sees the real $? / $LASTEXITCODE
-    $inner = GhTokenInnerPrompt
-    $tokenFile = Find-UpwardFile '.gh-token'
-    if ($tokenFile) {
-        $env:GH_TOKEN = (Get-Content $tokenFile).Trim()
-    } else {
-        Remove-Item env:GH_TOKEN -ErrorAction SilentlyContinue
-    }
-    $inner
-}
-```
+This defines a `claude` wrapper and `Switch-ClaudeAccount` (alias `use-personal`), sets
+`$env:CLAUDE_ACCOUNT` to `Personal` or `Work` before each oh-my-posh render, and sets
+`GH_TOKEN` from `.gh-token` before each prompt by wrapping the existing `prompt` function, with
+or without oh-my-posh.
 
 ### Prompt segment (optional)
 
