@@ -26,6 +26,7 @@
     "notice": false
   },
   "console_title_template": "{{ .Shell }} in {{ .Folder }}",
+  "pwd": "osc7",
   "blocks": [
     {
       "type": "prompt",
