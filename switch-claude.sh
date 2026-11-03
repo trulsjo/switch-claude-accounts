@@ -101,6 +101,17 @@ _get_gh_token() {
     fi
 }
 
+# Refresh the context and export CLAUDE_CONFIG_DIR for the folder, so a claude
+# started without the wrapper above (by another launcher) still gets its account.
+_export_claude_context() {
+    _get_claude_context
+    if [[ -n "$CLAUDE_ACTIVE_PATH" ]]; then
+        export CLAUDE_CONFIG_DIR="$CLAUDE_ACTIVE_PATH"
+    else
+        unset CLAUDE_CONFIG_DIR
+    fi
+}
+
 # 4. Prompt: refresh context before every prompt.
 # With oh-my-posh (source this AFTER `eval "$(oh-my-posh init bash ...)"`): its
 # hook calls set_poshcontext after capturing $? and before rendering, so the
@@ -108,15 +119,15 @@ _get_gh_token() {
 if declare -F _omp_hook > /dev/null; then
     set_poshcontext() {
         _get_gh_token
-        _get_claude_context
+        _export_claude_context
         export CLAUDE_ACCOUNT="$CLAUDE_ACTIVE_TYPE"
     }
     return 0 2> /dev/null
 fi
 # Without it: the escapes live in PS1 itself, because \[ \] are only
 # interpreted there, not inside expanded variables
-if [[ ! "$PROMPT_COMMAND" =~ _get_claude_context ]]; then
-    PROMPT_COMMAND="_get_claude_context${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+if [[ ! "$PROMPT_COMMAND" =~ _export_claude_context ]]; then
+    PROMPT_COMMAND="_export_claude_context${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
 fi
 if [[ ! "$PROMPT_COMMAND" =~ _get_gh_token ]]; then
     PROMPT_COMMAND="_get_gh_token; $PROMPT_COMMAND"

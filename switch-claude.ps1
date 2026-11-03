@@ -60,9 +60,14 @@ Set-Alias -Name use-personal -Value Switch-ClaudeAccount
 
 # 4. Prompt: oh-my-posh calls Set-PoshContext before each render (after it has
 # captured $?), so the theme's "text" segment can show {{ .Env.CLAUDE_ACCOUNT }}.
+# It also exports CLAUDE_CONFIG_DIR for the folder, so a claude started without the
+# wrapper above (herdr's agent start runs claude.exe through Start-Process) still gets
+# the folder's account.
 # Must be an alias: its module's own empty Set-PoshContext would win over a function.
 function Set-ClaudePoshContext {
-    $env:CLAUDE_ACCOUNT = (Get-ClaudeConfigContext).Type
+    $config = Get-ClaudeConfigContext
+    $env:CLAUDE_ACCOUNT = $config.Type
+    $env:CLAUDE_CONFIG_DIR = $config.Path   # $null removes the variable
 }
 New-Alias -Name Set-PoshContext -Value Set-ClaudePoshContext -Scope Global -Force
 

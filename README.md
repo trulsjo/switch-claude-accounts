@@ -22,7 +22,8 @@ oh-my-posh init pwsh | Invoke-Expression
 ```
 
 This defines a `claude` wrapper and `Switch-ClaudeAccount` (alias `use-personal`), sets
-`$env:CLAUDE_ACCOUNT` to `Personal` or `Work` before each oh-my-posh render, and sets
+`$env:CLAUDE_ACCOUNT` to `Personal` or `Work` and `$env:CLAUDE_CONFIG_DIR` to the folder's
+account before each oh-my-posh render, and sets
 `GH_TOKEN` from `.gh-token` before each prompt by wrapping the existing `prompt` function, with
 or without oh-my-posh.
 
@@ -54,7 +55,8 @@ This defines a `claude` wrapper and `switch_claude_account [personal|work]` (ali
 `use-personal`), and before each prompt sets `GH_TOKEN` from `.gh-token`. With oh-my-posh it
 does that in oh-my-posh's `set_poshcontext` hook, after the exit status is captured, and exports
 `CLAUDE_ACCOUNT` for the theme's segment, as in pwsh. Without oh-my-posh it adds itself to
-`PROMPT_COMMAND` and prefixes the prompt with `Claude: Personal` or `Claude: Work`. The lookups
+`PROMPT_COMMAND` and prefixes the prompt with `Claude: Personal` or `Claude: Work`. Either way
+it exports `CLAUDE_CONFIG_DIR` for the folder's account before each prompt. The lookups
 run in pure bash with no subprocesses, because they run before every prompt.
 
 If Git Bash warns on start that it found `~/.bashrc` but no `~/.bash_profile`, it creates a
@@ -73,6 +75,11 @@ If Git Bash warns on start that it found `~/.bashrc` but no `~/.bash_profile`, i
 
 Open shells pick up a change to either script after `. $PROFILE` or `source ~/.bashrc`. A
 running Claude session keeps the account it started with.
+
+Because the prompt exports `CLAUDE_CONFIG_DIR`, a `claude` started without the wrapper, such as
+`herdr agent start`, which runs `claude.exe` through `Start-Process`, still gets the folder's
+account. In pwsh this needs oh-my-posh, whose render calls the hook. A `CLAUDE_CONFIG_DIR` set
+by hand in the shell is replaced at the next prompt.
 
 ## License
 
